@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dual Random Number Picker with Exclusions</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 650px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: var(--text-color);
+        }
+
+        .pickers-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 550px) {
+            .pickers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .picker-box {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            text-align: left;
+        }
+
+        .picker-box h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .input-field {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: #4b5563;
+        }
+
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.4rem;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="number"]:focus, input[type="text"]:focus {
+            border-color: var(--primary-color);
+        }
+
+        .exclude-field {
+            margin-bottom: 0.75rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            color: #374151;
+            cursor: pointer;
+        }
+
+        .checkbox-group input {
+            cursor: pointer;
+            width: 1rem;
+            height: 1rem;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.65rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .result-container {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #eef2ff;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-bottom: 0.15rem;
+        }
+
+        .result-display {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .cycle-status {
+            font-size: 0.75rem;
+            color: #059669;
+            margin-top: 0.5rem;
+            text-align: center;
+            font-weight: 600;
+            min-height: 1rem;
+        }
+
+        .master-btn {
+            background-color: #10b981;
+            margin-top: 0.5rem;
+        }
+        .master-btn:hover {
+            background-color: #059669;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Dual Random Number Picker</h1>
+        
+        <div class="pickers-grid">
+            <!-- Picker 1 -->
+            <div class="picker-box">
+                <h3>Picker 1</h3>
+                <div class="input-group">
+                    <div class="input-field">
+                        <label for="min1">Min</label>
+                        <input type="number" id="min1" value="1">
+                    </div>
+                    <div class="input-field">
+                        <label for="max1">Max</label>
+                        <input type="number" id="max1" value="10">
+                    </div>
+                </div>
+                <div class="exclude-field">
+                    <label for="exclude1">Exclude Numbers (e.g. 3, 7, 9-10)</label>
+                    <input type="text" id="exclude1" placeholder="e.g. 4, 8">
+                </div>
+                <label class="checkbox-group">
+                    <input type="checkbox" id="noRepeats1"> No repeats per cycle
+                </label>
+                <button id="pickBtn1">Pick 1</button>
+                <div class="result-container">
+                    <div class="result-label">Result</div>
+                    <div id="result1" class="result-display">?</div>
+                    <div id="status1" class="cycle-status"></div>
+                </div>
+            </div>
+
+            <!-- Picker 2 -->
+            <div class="picker-box">
+                <h3>Picker 2</h3>
+                <div class="input-group">
+                    <div class="input-field">
+                        <label for="min2">Min</label>
+                        <input type="number" id="min2" value="1">
+                    </div>
+                    <div class="input-field">
+                        <label for="max2">Max</label>
+                        <input type="number" id="max2" value="10">
+                    </div>
+                </div>
+                <div class="exclude-field">
+                    <label for="exclude2">Exclude Numbers (e.g. 3, 7, 9-10)</label>
+                    <input type="text" id="exclude2" placeholder="e.g. 2, 5">
+                </div>
+                <label class="checkbox-group">
+                    <input type="checkbox" id="noRepeats2"> No repeats per cycle
+                </label>
+                <button id="pickBtn2">Pick 2</button>
+                <div class="result-container">
+                    <div class="result-label">Result</div>
+                    <div id="result2" class="result-display">?</div>
+                    <div id="status2" class="cycle-status"></div>
+                </div>
+            </div>
+        </div>
+
+        <button id="pickBothBtn" class="master-btn">Pick Both Simultaneously</button>
+    </div>
+
+    <script>
+        const pools = {};
+
+        // Helper function to parse exclusion string into a Set of numbers
+        function parseExclusions(str) {
+            const excludedSet = new Set();
+            if (!str.trim()) return excludedSet;
+
+            const parts = str.split(',');
+            for (let part of parts) {
+                part = part.trim();
+                if (part.includes('-')) {
+                    let range = part.split('-');
+                    let start = parseInt(range[0]);
+                    let end = parseInt(range[1]);
+                    if (!isNaN(start) && !isNaN(end)) {
+                        for (let i = Math.min(start, end); i <= Math.max(start, end); i++) {
+                            excludedSet.add(i);
+                        }
+                    }
+                } else {
+                    let num = parseInt(part);
+                    if (!isNaN(num)) {
+                        excludedSet.add(num);
+                    }
+                }
+            }
+            return excludedSet;
+        }
+
+        function runPicker(minId, maxId, excludeId, checkId, btnId, resultId, statusId) {
+            const minInput = document.getElementById(minId);
+            const maxInput = document.getElementById(maxId);
+            const excludeInput = document.getElementById(excludeId);
+            const checkbox = document.getElementById(checkId);
+            const pickBtn = document.getElementById(btnId);
+            const resultDisplay = document.getElementById(resultId);
+            const statusDisplay = document.getElementById(statusId);
+
+            let min = parseInt(minInput.value);
+            let max = parseInt(maxInput.value);
+
+            // Validation
+            if (isNaN(min) || isNaN(max)) {
+                alert('Please enter valid numbers for Min and Max.');
+                return Promise.resolve();
+            }
+            if (min > max) {
+                alert('Minimum cannot be greater than Maximum.');
+                return Promise.resolve();
+            }
+
+            const excludedSet = parseExclusions(excludeInput.value);
+
+            // Build valid available numbers pool
+            let availableNumbers = [];
+            for (let i = min; i <= max; i++) {
+                if (!excludedSet.has(i)) {
+                    availableNumbers.push(i);
+                }
+            }
+
+            if (availableNumbers.length === 0) {
+                alert('All numbers in this range are excluded!');
+                return Promise.resolve();
+            }
+
+            let finalNumber;
+
+            if (checkbox.checked) {
+                // No Repeats with Exclusions Mode
+                const poolKey = `${minId}_${min}_${max}_${excludeInput.value}`;
+
+                if (!pools[poolKey] || pools[poolKey].length === 0) {
+                    let tempPool = [...availableNumbers];
+                    // Fisher-Yates Shuffle
+                    for (let i = tempPool.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [tempPool[i], tempPool[j]] = [tempPool[j], tempPool[i]];
+                    }
+                    pools[poolKey] = tempPool;
+                }
+
+                finalNumber = pools[poolKey].pop();
+                const remaining = pools[poolKey].length;
+                const total = availableNumbers.length;
+                statusDisplay.textContent = `Cycle left: ${remaining}/${total}`;
+            } else {
+                // Standard Random Mode with Exclusions
+                statusDisplay.textContent = "";
+                const randomIndex = Math.floor(Math.random() * availableNumbers.length);
+                finalNumber = availableNumbers[randomIndex];
+            }
+
+            // Animation sequence (scrambling only through valid available numbers)
+            let iterations = 0;
+            const maxIterations = 15;
+            const intervalTime = 40;
+
+            pickBtn.disabled = true;
+
+            return new Promise((resolve) => {
+                const scrambleInterval = setInterval(() => {
+                    const tempRandomIndex = Math.floor(Math.random() * availableNumbers.length);
+                    resultDisplay.textContent = availableNumbers[tempRandomIndex];
+
+                    iterations++;
+                    if (iterations >= maxIterations) {
+                        clearInterval(scrambleInterval);
+                        resultDisplay.textContent = finalNumber;
+                        pickBtn.disabled = false;
+                        resolve();
+                    }
+                }, intervalTime);
+            });
+        }
+
+        // Event listeners
+        document.getElementById('pickBtn1').addEventListener('click', () => {
+            runPicker('min1', 'max1', 'exclude1', 'noRepeats1', 'pickBtn1', 'result1', 'status1');
+        });
+
+        document.getElementById('pickBtn2').addEventListener('click', () => {
+            runPicker('min2', 'max2', 'exclude2', 'noRepeats2', 'pickBtn2', 'result2', 'status2');
+        });
+
+        document.getElementById('pickBothBtn').addEventListener('click', () => {
+            Promise.all([
+                runPicker('min1', 'max1', 'exclude1', 'noRepeats1', 'pickBtn1', 'result1', 'status1'),
+                runPicker('min2', 'max2', 'exclude2', 'noRepeats2', 'pickBtn2', 'result2', 'status2')
+            ]);
+        });
+    </script>
+
+</body>
+</html>
